@@ -85,7 +85,7 @@ const Home: React.FC = () => {
           title: '状态',
           type: 'switch',
           required: false,
-          defaultValue: 1,
+          defaultValue: true,
           hideInTable: false,
           width: 80
         },

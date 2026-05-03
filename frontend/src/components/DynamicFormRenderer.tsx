@@ -56,8 +56,8 @@ const DynamicFormRenderer: React.FC<DynamicFormRendererProps> = ({
   submitter,
   readonly = false,
 }) => {
-  const [form] = Form.useForm<ProFormInstance>()
-  const activeForm = externalForm || form
+  const [internalForm] = Form.useForm<ProFormInstance>()
+  const activeForm = externalForm || internalForm
   const [formValues, setFormValues] = useState<Record<string, any>>(initialValues || {})
   const [loading, setLoading] = useState(false)
 
@@ -335,6 +335,28 @@ const DynamicFormRenderer: React.FC<DynamicFormRendererProps> = ({
     }
   }
 
+  const formItems = formColumns.map((column, index) => (
+    <React.Fragment key={column.field || index}>
+      {column.hiddenExpression ? (
+        <ProFormDependency name={Object.keys(formValues)}>
+          {(_, form) => {
+            const currentValues = form?.getFieldsValue() || formValues
+            if (evaluateHiddenExpression(column.hiddenExpression!, currentValues)) {
+              return null
+            }
+            return renderFormItem(column, index)
+          }}
+        </ProFormDependency>
+      ) : (
+        renderFormItem(column, index)
+      )}
+    </React.Fragment>
+  ))
+
+  if (submitter === false) {
+    return <>{formItems}</>
+  }
+
   return (
     <ProForm
       form={activeForm}
@@ -342,37 +364,19 @@ const DynamicFormRenderer: React.FC<DynamicFormRendererProps> = ({
       onFinish={handleFinish}
       onValuesChange={handleValuesChange}
       submitter={
-        submitter === false
-          ? false
-          : {
-              submitText: formLayoutConfig.submitText || '提交',
-              resetText: formLayoutConfig.resetText || '重置',
-              searchConfig: false,
-              ...submitter,
-            }
+        {
+          submitText: formLayoutConfig.submitText || '提交',
+          resetText: formLayoutConfig.resetText || '重置',
+          searchConfig: false,
+          ...submitter,
+        }
       }
       layout={formLayoutConfig.layout || 'horizontal'}
       labelCol={{ span: 6 }}
       wrapperCol={{ span: 18 }}
       labelAlign={formLayoutConfig.labelAlign || 'right'}
     >
-      {formColumns.map((column, index) => (
-        <React.Fragment key={column.field || index}>
-          {column.hiddenExpression ? (
-            <ProFormDependency name={Object.keys(formValues)}>
-              {(_, form) => {
-                const currentValues = form?.getFieldsValue() || formValues
-                if (evaluateHiddenExpression(column.hiddenExpression!, currentValues)) {
-                  return null
-                }
-                return renderFormItem(column, index)
-              }}
-            </ProFormDependency>
-          ) : (
-            renderFormItem(column, index)
-          )}
-        </React.Fragment>
-      ))}
+      {formItems}
     </ProForm>
   )
 }
