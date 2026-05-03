@@ -1,8 +1,7 @@
 package com.lowcode.service.impl;
 
 import cn.hutool.core.util.StrUtil;
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONObject;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -28,9 +27,15 @@ public class FormConfigServiceImpl extends ServiceImpl<FormConfigMapper, FormCon
     private final RedisTemplate<String, Object> redisTemplate;
     private final JdbcTemplate jdbcTemplate;
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+    private final ObjectMapper objectMapper;
     
     private static final String REDIS_PREFIX = "form:config:";
     private static final long REDIS_EXPIRE_TIME = 30;
+    
+    private static final java.util.Set<String> EXCLUDED_PARAMS = java.util.Set.of(
+        "pageNum", "pageSize", "current", "size", "sort", "filter", 
+        "pageNum_old", "pageSize_old", "order", "asc", "desc"
+    );
     
     @Override
     public FormConfig getByFormCode(String formCode) {
@@ -38,7 +43,7 @@ public class FormConfigServiceImpl extends ServiceImpl<FormConfigMapper, FormCon
         Object cached = redisTemplate.opsForValue().get(redisKey);
         if (cached != null) {
             log.info("从Redis缓存获取表单配置: {}", formCode);
-            return JSON.parseObject(JSON.toJSONString(cached), FormConfig.class);
+            return convertToFormConfig(cached);
         }
         
         LambdaQueryWrapper<FormConfig> wrapper = new LambdaQueryWrapper<>();
@@ -54,6 +59,18 @@ public class FormConfigServiceImpl extends ServiceImpl<FormConfigMapper, FormCon
         }
         
         return formConfig;
+    }
+    
+    private FormConfig convertToFormConfig(Object cached) {
+        if (cached instanceof FormConfig) {
+            return (FormConfig) cached;
+        }
+        try {
+            return objectMapper.convertValue(cached, FormConfig.class);
+        } catch (Exception e) {
+            log.warn("Redis缓存类型转换失败，返回null: {}", e.getMessage());
+            return null;
+        }
     }
     
     @Override
@@ -135,6 +152,10 @@ public class FormConfigServiceImpl extends ServiceImpl<FormConfigMapper, FormCon
             for (Map.Entry<String, Object> entry : params.entrySet()) {
                 String key = entry.getKey();
                 Object value = entry.getValue();
+                
+                if (EXCLUDED_PARAMS.contains(key)) {
+                    continue;
+                }
                 
                 if (value != null && StrUtil.isNotBlank(value.toString())) {
                     whereClause.append(" AND ").append(key).append(" LIKE :").append(key);

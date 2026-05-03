@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -22,7 +23,7 @@ public class DynamicDataController {
     
     @GetMapping("/{formCode}/page")
     @Operation(summary = "分页查询动态数据", description = "根据表单编码分页查询对应的业务表数据")
-    public Result<Map<String, Object>> getDynamicDataPage(
+    public Result<List<Map<String, Object>>> getDynamicDataPage(
             @Parameter(description = "表单编码", required = true)
             @PathVariable String formCode,
             @Parameter(description = "页码", example = "1")
@@ -34,7 +35,10 @@ public class DynamicDataController {
         log.info("分页查询动态数据: formCode={}, pageNum={}, pageSize={}", formCode, pageNum, pageSize);
         try {
             Map<String, Object> result = formConfigService.getDynamicData(formCode, pageNum, pageSize, params);
-            return Result.success((Map<String, Object>) result.get("records"), (Long) result.get("total"));
+            @SuppressWarnings("unchecked")
+            List<Map<String, Object>> records = (List<Map<String, Object>>) result.get("records");
+            Long total = ((Number) result.get("total")).longValue();
+            return Result.success(records, total);
         } catch (Exception e) {
             log.error("查询动态数据失败", e);
             return Result.error("查询失败: " + e.getMessage());
