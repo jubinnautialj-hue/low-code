@@ -1,0 +1,311 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Form Configuration Schema",
+  "description": "JSON Schema for dynamic form configuration in low-code system",
+  "type": "object",
+  "required": ["formTitle", "columns"],
+  "properties": {
+    "formTitle": {
+      "type": "string",
+      "description": "表单标题"
+    },
+    "formWidth": {
+      "type": "number",
+      "description": "表单宽度（像素）",
+      "default": 800
+    },
+    "labelWidth": {
+      "type": "number",
+      "description": "标签宽度（像素）",
+      "default": 120
+    },
+    "columns": {
+      "type": "array",
+      "description": "表单字段配置数组",
+      "items": {
+        "type": "object",
+        "required": ["field", "title", "type"],
+        "properties": {
+          "field": {
+            "type": "string",
+            "description": "字段名，对应数据库字段"
+          },
+          "title": {
+            "type": "string",
+            "description": "字段显示名称"
+          },
+          "type": {
+            "type": "string",
+            "description": "字段类型",
+            "enum": ["input", "select", "cascader", "date", "upload", "richText", "radio", "checkbox", "switch", "rate", "slider"]
+          },
+          "inputType": {
+            "type": "string",
+            "description": "输入框类型，当type为input时有效",
+            "enum": ["text", "password", "email", "tel", "number", "textarea", "url"]
+          },
+          "required": {
+            "type": "boolean",
+            "description": "是否必填",
+            "default": false
+          },
+          "placeholder": {
+            "type": "string",
+            "description": "占位提示文字"
+          },
+          "defaultValue": {
+            "description": "默认值"
+          },
+          "disabled": {
+            "type": "boolean",
+            "description": "是否禁用",
+            "default": false
+          },
+          "hidden": {
+            "type": "boolean",
+            "description": "是否完全隐藏（表单和列表都隐藏）",
+            "default": false
+          },
+          "hideInForm": {
+            "type": "boolean",
+            "description": "是否在表单中隐藏",
+            "default": false
+          },
+          "hideInTable": {
+            "type": "boolean",
+            "description": "是否在列表中隐藏",
+            "default": false
+          },
+          "width": {
+            "type": "number",
+            "description": "列表列宽度（像素）"
+          },
+          "rules": {
+            "type": "array",
+            "description": "校验规则数组",
+            "items": {
+              "type": "object",
+              "properties": {
+                "required": {
+                  "type": "boolean",
+                  "description": "是否必填校验"
+                },
+                "pattern": {
+                  "type": "string",
+                  "description": "正则表达式校验"
+                },
+                "message": {
+                  "type": "string",
+                  "description": "校验失败提示信息"
+                },
+                "min": {
+                  "type": "number",
+                  "description": "最小长度/最小值"
+                },
+                "max": {
+                  "type": "number",
+                  "description": "最大长度/最大值"
+                },
+                "type": {
+                  "type": "string",
+                  "description": "内置校验类型",
+                  "enum": ["email", "url", "number", "integer", "float", "date", "boolean"]
+                }
+              }
+            }
+          },
+          "linkage": {
+            "type": "object",
+            "description": "联动规则配置",
+            "properties": {
+              "triggerField": {
+                "type": "string",
+                "description": "触发联动的字段名"
+              },
+              "targetField": {
+                "type": "string",
+                "description": "被联动的目标字段名"
+              },
+              "type": {
+                "type": "string",
+                "description": "联动类型",
+                "enum": ["cascade", "visibility", "value", "options"]
+              },
+              "conditions": {
+                "type": "array",
+                "description": "联动条件数组",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "triggerValue": {
+                      "description": "触发值"
+                    },
+                    "targetValue": {
+                      "description": "目标值"
+                    },
+                    "visible": {
+                      "type": "boolean",
+                      "description": "是否显示"
+                    },
+                    "options": {
+                      "type": "array",
+                      "description": "动态选项"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "hiddenExpression": {
+            "type": "string",
+            "description": "动态隐藏表达式，使用JavaScript表达式，如\"!province\""
+          },
+          "options": {
+            "type": "array",
+            "description": "下拉选项（select/radio/checkbox类型使用）",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "description": "显示文本"
+                },
+                "value": {
+                  "description": "选项值"
+                },
+                "disabled": {
+                  "type": "boolean",
+                  "description": "是否禁用"
+                }
+              }
+            }
+          },
+          "dateType": {
+            "type": "string",
+            "description": "日期类型，当type为date时有效",
+            "enum": ["date", "dateTime", "month", "quarter", "year", "week", "range", "dateRange", "dateTimeRange"]
+          },
+          "format": {
+            "type": "string",
+            "description": "日期格式，如\"YYYY-MM-DD\"、\"YYYY-MM-DD HH:mm:ss\""
+          },
+          "uploadType": {
+            "type": "string",
+            "description": "上传类型，当type为upload时有效",
+            "enum": ["image", "file", "video", "audio"]
+          },
+          "maxCount": {
+            "type": "number",
+            "description": "最大上传数量"
+          },
+          "maxSize": {
+            "type": "number",
+            "description": "最大文件大小（MB）"
+          },
+          "accept": {
+            "type": "string",
+            "description": "接受的文件类型，如\".jpg,.jpeg,.png\""
+          },
+          "action": {
+            "type": "string",
+            "description": "上传接口地址"
+          },
+          "listType": {
+            "type": "string",
+            "description": "文件列表样式",
+            "enum": ["text", "picture", "picture-card"]
+          },
+          "fieldNames": {
+            "type": "object",
+            "description": "自定义级联选择器的字段名映射",
+            "properties": {
+              "label": {
+                "type": "string",
+                "description": "显示文本字段名"
+              },
+              "value": {
+                "type": "string",
+                "description": "值字段名"
+              },
+              "children": {
+                "type": "string",
+                "description": "子级字段名"
+              }
+            }
+          },
+          "showAllLevels": {
+            "type": "boolean",
+            "description": "级联选择器是否显示完整路径",
+            "default": true
+          },
+          "rows": {
+            "type": "number",
+            "description": "文本域行数，当inputType为textarea时有效",
+            "default": 3
+          }
+        }
+      }
+    },
+    "tableConfig": {
+      "type": "object",
+      "description": "列表页面配置",
+      "properties": {
+        "showIndex": {
+          "type": "boolean",
+          "description": "是否显示序号列",
+          "default": true
+        },
+        "showSelection": {
+          "type": "boolean",
+          "description": "是否显示选择列",
+          "default": true
+        },
+        "pagination": {
+          "type": "boolean",
+          "description": "是否显示分页",
+          "default": true
+        },
+        "pageSize": {
+          "type": "number",
+          "description": "每页显示条数",
+          "default": 10
+        },
+        "searchFields": {
+          "type": "array",
+          "description": "搜索字段数组",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "formConfig": {
+      "type": "object",
+      "description": "表单页面配置",
+      "properties": {
+        "submitText": {
+          "type": "string",
+          "description": "提交按钮文字",
+          "default": "提交"
+        },
+        "resetText": {
+          "type": "string",
+          "description": "重置按钮文字",
+          "default": "重置"
+        },
+        "layout": {
+          "type": "string",
+          "description": "表单布局",
+          "enum": ["horizontal", "vertical", "inline"],
+          "default": "horizontal"
+        },
+        "labelAlign": {
+          "type": "string",
+          "description": "标签对齐方式",
+          "enum": ["left", "right"],
+          "default": "right"
+        }
+      }
+    }
+  }
+}
