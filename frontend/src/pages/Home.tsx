@@ -83,13 +83,8 @@ const Home: React.FC = () => {
         {
           field: 'status',
           title: '状态',
-          type: 'select',
-          required: true,
-          placeholder: '请选择状态',
-          options: [
-            { label: '禁用', value: 0 },
-            { label: '启用', value: 1 }
-          ],
+          type: 'switch',
+          required: false,
           defaultValue: 1,
           hideInTable: false,
           width: 80

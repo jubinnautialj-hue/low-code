@@ -165,15 +165,19 @@ public class FormConfigServiceImpl extends ServiceImpl<FormConfigMapper, FormCon
         sql.append(tableName).append(" (");
         sql.append(" id BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',");
         
+        java.util.Set<String> usedFields = new java.util.HashSet<>();
+        usedFields.add("id");
+        
         for (Map<String, Object> column : columns) {
             String field = (String) column.get("field");
             String title = (String) column.get("title");
             String type = (String) column.get("type");
             
-            if ("id".equals(field)) {
+            if ("id".equals(field) || usedFields.contains(field)) {
                 continue;
             }
             
+            usedFields.add(field);
             String sqlType = getSqlType(type, column);
             String comment = title != null ? title : field;
             
@@ -181,10 +185,26 @@ public class FormConfigServiceImpl extends ServiceImpl<FormConfigMapper, FormCon
             sql.append(" COMMENT '").append(comment).append("',");
         }
         
-        sql.append(" status TINYINT DEFAULT 1 COMMENT '状态：0-禁用，1-启用',");
-        sql.append(" create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',");
-        sql.append(" update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',");
-        sql.append(" deleted TINYINT DEFAULT 0 COMMENT '逻辑删除标志：0-未删除，1-已删除',");
+        if (!usedFields.contains("status")) {
+            sql.append(" status TINYINT DEFAULT 1 COMMENT '状态：0-禁用，1-启用',");
+            usedFields.add("status");
+        }
+        
+        if (!usedFields.contains("create_time")) {
+            sql.append(" create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',");
+            usedFields.add("create_time");
+        }
+        
+        if (!usedFields.contains("update_time")) {
+            sql.append(" update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',");
+            usedFields.add("update_time");
+        }
+        
+        if (!usedFields.contains("deleted")) {
+            sql.append(" deleted TINYINT DEFAULT 0 COMMENT '逻辑删除标志：0-未删除，1-已删除',");
+            usedFields.add("deleted");
+        }
+        
         sql.append(" PRIMARY KEY (id)");
         sql.append(") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='动态业务表'");
         
