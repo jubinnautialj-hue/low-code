@@ -1,0 +1,55 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB',
+    'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.ant-pro-table {
+  background: #fff;
+}
+
+.ant-modal-body {
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.ant-upload-list-picture-card-container,
+.ant-upload.ant-upload-select-picture-card {
+  width: 104px;
+  height: 104px;
+}
+
+.dynamic-form-container {
+  padding: 16px;
+}
+
+.dynamic-crud-page {
+  padding: 16px;
+  background: #f0f2f5;
+  min-height: 100vh;
+}
+
+.page-header {
+  background: #fff;
+  padding: 16px 24px;
+  margin-bottom: 16px;
+  border-radius: 4px;
+}
+
+.page-content {
+  background: #fff;
+  padding: 16px;
+  border-radius: 4px;
+}
