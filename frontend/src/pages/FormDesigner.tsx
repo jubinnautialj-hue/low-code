@@ -140,7 +140,8 @@ const COMPONENT_TYPES: {
 ]
 
 const FormDesigner: React.FC = () => {
-  const { formCode } = useParams<{ formCode?: string }>()
+  const params = useParams<{ formCode?: string }>()
+  const formCode = typeof params.formCode === 'string' && params.formCode ? params.formCode : undefined
   const navigate = useNavigate()
   
   const [loading, setLoading] = useState(false)
@@ -175,12 +176,15 @@ const FormDesigner: React.FC = () => {
   })
 
   useEffect(() => {
-    if (formCode) {
+    if (formCode && typeof formCode === 'string') {
       loadFormConfig(formCode)
     }
   }, [formCode])
 
   const loadFormConfig = async (code: string) => {
+    if (!code || typeof code !== 'string') {
+      return
+    }
     setLoading(true)
     try {
       const res = await formConfigApi.getConfigJson(code)

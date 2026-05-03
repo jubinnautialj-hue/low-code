@@ -39,7 +39,7 @@ const Home: React.FC = () => {
   }
 
   const handleGoToDesigner = (formCode?: string) => {
-    if (formCode) {
+    if (formCode && typeof formCode === 'string') {
       navigate(`/designer/${formCode}`)
     } else {
       navigate('/designer')
@@ -179,10 +179,10 @@ const Home: React.FC = () => {
                 </Text>
               </div>
               <Space>
-                <Button type="primary" icon={<PlusOutlined />} size="large" onClick={handleGoToDesigner}>
+                <Button type="primary" icon={<PlusOutlined />} size="large" onClick={() => handleGoToDesigner()}>
                   设计新表单
                 </Button>
-                <Button icon={<PlusOutlined />} size="large" onClick={handleQuickCreate}>
+                <Button icon={<PlusOutlined />} size="large" onClick={() => handleQuickCreate()}>
                   快速创建
                 </Button>
               </Space>
