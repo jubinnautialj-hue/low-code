@@ -98,6 +98,15 @@ public class FormConfigServiceImpl extends ServiceImpl<FormConfigMapper, FormCon
     }
     
     @Override
+    public List<FormConfig> listAll() {
+        LambdaQueryWrapper<FormConfig> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(FormConfig::getStatus, 1)
+               .eq(FormConfig::getDeleted, 0)
+               .orderByDesc(FormConfig::getCreateTime);
+        return this.list(wrapper);
+    }
+    
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean saveOrUpdateFormConfig(FormConfig formConfig) {
         boolean result = this.saveOrUpdate(formConfig);
@@ -109,6 +118,128 @@ public class FormConfigServiceImpl extends ServiceImpl<FormConfigMapper, FormCon
         }
         
         return result;
+    }
+    
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean createFormWithTable(FormConfig formConfig) {
+        String tableName = formConfig.getBusinessTable();
+        String configJson = formConfig.getConfigJson();
+        
+        if (StrUtil.isBlank(tableName)) {
+            throw new RuntimeException("业务表名不能为空");
+        }
+        
+        if (StrUtil.isBlank(configJson)) {
+            throw new RuntimeException("表单配置不能为空");
+        }
+        
+        try {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> config = objectMapper.readValue(configJson, Map.class);
+            @SuppressWarnings("unchecked")
+            List<Map<String, Object>> columns = (List<Map<String, Object>>) config.get("columns");
+            
+            if (columns == null || columns.isEmpty()) {
+                throw new RuntimeException("表单字段配置不能为空");
+            }
+            
+            createBusinessTable(tableName, columns);
+            
+            boolean result = this.save(formConfig);
+            
+            if (result) {
+                log.info("创建表单和业务表成功: formCode={}, tableName={}", formConfig.getFormCode(), tableName);
+            }
+            
+            return result;
+            
+        } catch (Exception e) {
+            log.error("创建表单和业务表失败", e);
+            throw new RuntimeException("创建表单失败: " + e.getMessage());
+        }
+    }
+    
+    private void createBusinessTable(String tableName, List<Map<String, Object>> columns) {
+        StringBuilder sql = new StringBuilder("CREATE TABLE IF NOT EXISTS ");
+        sql.append(tableName).append(" (");
+        sql.append(" id BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',");
+        
+        for (Map<String, Object> column : columns) {
+            String field = (String) column.get("field");
+            String title = (String) column.get("title");
+            String type = (String) column.get("type");
+            
+            if ("id".equals(field)) {
+                continue;
+            }
+            
+            String sqlType = getSqlType(type, column);
+            String comment = title != null ? title : field;
+            
+            sql.append(" ").append(field).append(" ").append(sqlType);
+            sql.append(" COMMENT '").append(comment).append("',");
+        }
+        
+        sql.append(" status TINYINT DEFAULT 1 COMMENT '状态：0-禁用，1-启用',");
+        sql.append(" create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',");
+        sql.append(" update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',");
+        sql.append(" deleted TINYINT DEFAULT 0 COMMENT '逻辑删除标志：0-未删除，1-已删除',");
+        sql.append(" PRIMARY KEY (id)");
+        sql.append(") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='动态业务表'");
+        
+        log.info("创建业务表 SQL: {}", sql);
+        jdbcTemplate.execute(sql.toString());
+    }
+    
+    private String getSqlType(String type, Map<String, Object> column) {
+        if (type == null) {
+            return "VARCHAR(255)";
+        }
+        
+        switch (type) {
+            case "input":
+                String inputType = (String) column.get("inputType");
+                if ("textarea".equals(inputType)) {
+                    return "TEXT";
+                }
+                return "VARCHAR(255)";
+            
+            case "select":
+            case "radio":
+            case "checkbox":
+                return "VARCHAR(100)";
+            
+            case "cascader":
+                return "VARCHAR(500)";
+            
+            case "date":
+                String dateType = (String) column.get("dateType");
+                if ("dateTime".equals(dateType)) {
+                    return "DATETIME";
+                }
+                return "DATE";
+            
+            case "upload":
+                return "TEXT";
+            
+            case "richText":
+                return "TEXT";
+            
+            case "switch":
+                return "TINYINT";
+            
+            case "rate":
+            case "slider":
+                Integer max = (Integer) column.get("max");
+                if (max != null && max > 10) {
+                    return "INT";
+                }
+                return "TINYINT";
+            
+            default:
+                return "VARCHAR(255)";
+        }
     }
     
     @Override

@@ -119,6 +119,10 @@ export const formConfigApi = {
     return request.get(`/form/config/json/${formCode}`)
   },
   
+  listAll: (): Promise<ApiResponse<FormConfig[]>> => {
+    return request.get('/form/config/list')
+  },
+  
   getPage: (params: {
     pageNum?: number
     pageSize?: number
@@ -126,6 +130,10 @@ export const formConfigApi = {
     formName?: string
   }): Promise<ApiResponse<PageData<FormConfig>>> => {
     return request.get('/form/config/page', { params })
+  },
+  
+  create: (data: FormConfig): Promise<ApiResponse<boolean>> => {
+    return request.post('/form/config/create', data)
   },
   
   saveOrUpdate: (data: FormConfig): Promise<ApiResponse<boolean>> => {

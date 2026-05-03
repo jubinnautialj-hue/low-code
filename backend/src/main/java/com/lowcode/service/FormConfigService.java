@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.lowcode.entity.FormConfig;
 
+import java.util.List;
 import java.util.Map;
 
 public interface FormConfigService extends IService<FormConfig> {
@@ -14,7 +15,11 @@ public interface FormConfigService extends IService<FormConfig> {
     
     Page<FormConfig> pageList(Integer pageNum, Integer pageSize, String formCode, String formName);
     
+    List<FormConfig> listAll();
+    
     boolean saveOrUpdateFormConfig(FormConfig formConfig);
+    
+    boolean createFormWithTable(FormConfig formConfig);
     
     boolean deleteByFormCode(String formCode);
     

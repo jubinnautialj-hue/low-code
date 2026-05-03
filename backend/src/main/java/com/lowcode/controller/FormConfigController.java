@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -48,6 +49,14 @@ public class FormConfigController {
         return Result.success(configJson);
     }
     
+    @GetMapping("/list")
+    @Operation(summary = "获取所有启用的表单列表", description = "获取所有状态为启用的表单配置列表")
+    public Result<List<FormConfig>> listAll() {
+        log.info("获取所有启用的表单列表");
+        List<FormConfig> list = formConfigService.listAll();
+        return Result.success(list);
+    }
+    
     @GetMapping("/page")
     @Operation(summary = "分页查询表单配置列表", description = "支持按表单编码和名称模糊查询")
     public Result<Page<FormConfig>> pageList(
@@ -63,6 +72,21 @@ public class FormConfigController {
                 pageNum, pageSize, formCode, formName);
         Page<FormConfig> page = formConfigService.pageList(pageNum, pageSize, formCode, formName);
         return Result.success(page);
+    }
+    
+    @PostMapping("/create")
+    @Operation(summary = "创建新表单（同时创建业务表）", description = "创建新的表单配置，并自动创建对应的业务表")
+    public Result<Boolean> createForm(@RequestBody FormConfig formConfig) {
+        log.info("创建新表单: formCode={}, businessTable={}", formConfig.getFormCode(), formConfig.getBusinessTable());
+        try {
+            formConfig.setStatus(1);
+            formConfig.setVersion(1);
+            boolean result = formConfigService.createFormWithTable(formConfig);
+            return Result.success(result);
+        } catch (Exception e) {
+            log.error("创建表单失败", e);
+            return Result.error("创建失败: " + e.getMessage());
+        }
     }
     
     @PostMapping
