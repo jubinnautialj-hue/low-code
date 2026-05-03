@@ -88,234 +88,234 @@ VALUES (
     '用户管理表单',
     '用于管理系统用户信息的动态表单，包含省市联动和头像上传功能',
     'biz_user',
-    '{
-        "formTitle": "用户信息",
-        "formWidth": 800,
-        "labelWidth": 120,
-        "columns": [
-            {
-                "field": "id",
-                "title": "ID",
-                "type": "input",
-                "hidden": true,
-                "hideInForm": true,
-                "hideInTable": false,
-                "width": 80
-            },
-            {
-                "field": "username",
-                "title": "用户名",
-                "type": "input",
-                "required": true,
-                "placeholder": "请输入用户名",
-                "rules": [
-                    {
-                        "pattern": "^[a-zA-Z0-9_]{3,20}$",
-                        "message": "用户名必须是3-20位的字母、数字或下划线"
-                    }
-                ],
-                "hideInTable": false,
-                "width": 150
-            },
-            {
-                "field": "real_name",
-                "title": "真实姓名",
-                "type": "input",
-                "required": false,
-                "placeholder": "请输入真实姓名",
-                "hideInTable": false,
-                "width": 120
-            },
-            {
-                "field": "password",
-                "title": "密码",
-                "type": "input",
-                "inputType": "password",
-                "required": true,
-                "placeholder": "请输入密码",
-                "rules": [
-                    {
-                        "min": 6,
-                        "message": "密码长度不能少于6位"
-                    }
-                ],
-                "hideInTable": true
-            },
-            {
-                "field": "email",
-                "title": "邮箱",
-                "type": "input",
-                "inputType": "email",
-                "required": false,
-                "placeholder": "请输入邮箱地址",
-                "rules": [
-                    {
-                        "type": "email",
-                        "message": "请输入有效的邮箱地址"
-                    }
-                ],
-                "hideInTable": false,
-                "width": 180
-            },
-            {
-                "field": "phone",
-                "title": "手机号",
-                "type": "input",
-                "inputType": "tel",
-                "required": false,
-                "placeholder": "请输入手机号",
-                "rules": [
-                    {
-                        "pattern": "^1[3-9]\\d{9}$",
-                        "message": "请输入有效的手机号"
-                    }
-                ],
-                "hideInTable": false,
-                "width": 130
-            },
-            {
-                "field": "avatar",
-                "title": "头像",
-                "type": "upload",
-                "required": false,
-                "uploadType": "image",
-                "maxCount": 1,
-                "maxSize": 2,
-                "accept": ".jpg,.jpeg,.png,.gif",
-                "action": "/api/upload",
-                "listType": "picture-card",
-                "hideInTable": true
-            },
-            {
-                "field": "gender",
-                "title": "性别",
-                "type": "select",
-                "required": false,
-                "placeholder": "请选择性别",
-                "options": [
-                    { "label": "未知", "value": 0 },
-                    { "label": "男", "value": 1 },
-                    { "label": "女", "value": 2 }
-                ],
-                "hideInTable": false,
-                "width": 80
-            },
-            {
-                "field": "birthday",
-                "title": "生日",
-                "type": "date",
-                "dateType": "date",
-                "required": false,
-                "placeholder": "请选择生日",
-                "format": "YYYY-MM-DD",
-                "hideInTable": false,
-                "width": 120
-            },
-            {
-                "field": "region",
-                "title": "所在地区",
-                "type": "cascader",
-                "required": false,
-                "placeholder": "请选择省市区",
-                "showAllLevels": true,
-                "fieldNames": {
-                    "label": "label",
-                    "value": "value",
-                    "children": "children"
-                },
-                "hideInTable": true
-            },
-            {
-                "field": "province",
-                "title": "省份",
-                "type": "select",
-                "required": false,
-                "placeholder": "请选择省份",
-                "hideInTable": false,
-                "width": 100,
-                "linkage": {
-                    "triggerField": "province",
-                    "targetField": "city",
-                    "type": "cascade"
-                }
-            },
-            {
-                "field": "city",
-                "title": "城市",
-                "type": "select",
-                "required": false,
-                "placeholder": "请选择城市",
-                "hideInTable": false,
-                "width": 100,
-                "hiddenExpression": "!province"
-            },
-            {
-                "field": "district",
-                "title": "区县",
-                "type": "select",
-                "required": false,
-                "placeholder": "请选择区县",
-                "hideInTable": false,
-                "width": 100,
-                "hiddenExpression": "!city"
-            },
-            {
-                "field": "address",
-                "title": "详细地址",
-                "type": "input",
-                "inputType": "textarea",
-                "required": false,
-                "placeholder": "请输入详细地址",
-                "rows": 3,
-                "hideInTable": true
-            },
-            {
-                "field": "status",
-                "title": "状态",
-                "type": "select",
-                "required": true,
-                "placeholder": "请选择状态",
-                "options": [
-                    { "label": "禁用", "value": 0 },
-                    { "label": "启用", "value": 1 }
-                ],
-                "defaultValue": 1,
-                "hideInTable": false,
-                "width": 80
-            },
-            {
-                "field": "create_time",
-                "title": "创建时间",
-                "type": "date",
-                "dateType": "dateTime",
-                "hideInForm": true,
-                "hideInTable": false,
-                "width": 180
-            },
-            {
-                "field": "update_time",
-                "title": "更新时间",
-                "type": "date",
-                "dateType": "dateTime",
-                "hideInForm": true,
-                "hideInTable": false,
-                "width": 180
-            }
-        ],
-        "tableConfig": {
-            "showIndex": true,
-            "showSelection": true,
-            "pagination": true,
-            "pageSize": 10,
-            "searchFields": ["username", "real_name", "email", "phone", "status"]
-        },
-        "formConfig": {
-            "submitText": "提交",
-            "resetText": "重置",
-            "layout": "horizontal",
-            "labelAlign": "right"
-        }
-    }',
+    JSON_OBJECT(
+        'formTitle', '用户信息',
+        'formWidth', 800,
+        'labelWidth', 120,
+        'columns', JSON_ARRAY(
+            JSON_OBJECT(
+                'field', 'id',
+                'title', 'ID',
+                'type', 'input',
+                'hidden', TRUE,
+                'hideInForm', TRUE,
+                'hideInTable', FALSE,
+                'width', 80
+            ),
+            JSON_OBJECT(
+                'field', 'username',
+                'title', '用户名',
+                'type', 'input',
+                'required', TRUE,
+                'placeholder', '请输入用户名',
+                'rules', JSON_ARRAY(
+                    JSON_OBJECT(
+                        'pattern', '^[a-zA-Z0-9_]{3,20}$',
+                        'message', '用户名必须是3-20位的字母、数字或下划线'
+                    )
+                ),
+                'hideInTable', FALSE,
+                'width', 150
+            ),
+            JSON_OBJECT(
+                'field', 'real_name',
+                'title', '真实姓名',
+                'type', 'input',
+                'required', FALSE,
+                'placeholder', '请输入真实姓名',
+                'hideInTable', FALSE,
+                'width', 120
+            ),
+            JSON_OBJECT(
+                'field', 'password',
+                'title', '密码',
+                'type', 'input',
+                'inputType', 'password',
+                'required', TRUE,
+                'placeholder', '请输入密码',
+                'rules', JSON_ARRAY(
+                    JSON_OBJECT(
+                        'min', 6,
+                        'message', '密码长度不能少于6位'
+                    )
+                ),
+                'hideInTable', TRUE
+            ),
+            JSON_OBJECT(
+                'field', 'email',
+                'title', '邮箱',
+                'type', 'input',
+                'inputType', 'email',
+                'required', FALSE,
+                'placeholder', '请输入邮箱地址',
+                'rules', JSON_ARRAY(
+                    JSON_OBJECT(
+                        'type', 'email',
+                        'message', '请输入有效的邮箱地址'
+                    )
+                ),
+                'hideInTable', FALSE,
+                'width', 180
+            ),
+            JSON_OBJECT(
+                'field', 'phone',
+                'title', '手机号',
+                'type', 'input',
+                'inputType', 'tel',
+                'required', FALSE,
+                'placeholder', '请输入手机号',
+                'rules', JSON_ARRAY(
+                    JSON_OBJECT(
+                        'pattern', '^1[3-9][0-9]{9}$',
+                        'message', '请输入有效的手机号'
+                    )
+                ),
+                'hideInTable', FALSE,
+                'width', 130
+            ),
+            JSON_OBJECT(
+                'field', 'avatar',
+                'title', '头像',
+                'type', 'upload',
+                'required', FALSE,
+                'uploadType', 'image',
+                'maxCount', 1,
+                'maxSize', 2,
+                'accept', '.jpg,.jpeg,.png,.gif',
+                'action', '/api/upload',
+                'listType', 'picture-card',
+                'hideInTable', TRUE
+            ),
+            JSON_OBJECT(
+                'field', 'gender',
+                'title', '性别',
+                'type', 'select',
+                'required', FALSE,
+                'placeholder', '请选择性别',
+                'options', JSON_ARRAY(
+                    JSON_OBJECT('label', '未知', 'value', 0),
+                    JSON_OBJECT('label', '男', 'value', 1),
+                    JSON_OBJECT('label', '女', 'value', 2)
+                ),
+                'hideInTable', FALSE,
+                'width', 80
+            ),
+            JSON_OBJECT(
+                'field', 'birthday',
+                'title', '生日',
+                'type', 'date',
+                'dateType', 'date',
+                'required', FALSE,
+                'placeholder', '请选择生日',
+                'format', 'YYYY-MM-DD',
+                'hideInTable', FALSE,
+                'width', 120
+            ),
+            JSON_OBJECT(
+                'field', 'region',
+                'title', '所在地区',
+                'type', 'cascader',
+                'required', FALSE,
+                'placeholder', '请选择省市区',
+                'showAllLevels', TRUE,
+                'fieldNames', JSON_OBJECT(
+                    'label', 'label',
+                    'value', 'value',
+                    'children', 'children'
+                ),
+                'hideInTable', TRUE
+            ),
+            JSON_OBJECT(
+                'field', 'province',
+                'title', '省份',
+                'type', 'select',
+                'required', FALSE,
+                'placeholder', '请选择省份',
+                'hideInTable', FALSE,
+                'width', 100,
+                'linkage', JSON_OBJECT(
+                    'triggerField', 'province',
+                    'targetField', 'city',
+                    'type', 'cascade'
+                )
+            ),
+            JSON_OBJECT(
+                'field', 'city',
+                'title', '城市',
+                'type', 'select',
+                'required', FALSE,
+                'placeholder', '请选择城市',
+                'hideInTable', FALSE,
+                'width', 100,
+                'hiddenExpression', '!province'
+            ),
+            JSON_OBJECT(
+                'field', 'district',
+                'title', '区县',
+                'type', 'select',
+                'required', FALSE,
+                'placeholder', '请选择区县',
+                'hideInTable', FALSE,
+                'width', 100,
+                'hiddenExpression', '!city'
+            ),
+            JSON_OBJECT(
+                'field', 'address',
+                'title', '详细地址',
+                'type', 'input',
+                'inputType', 'textarea',
+                'required', FALSE,
+                'placeholder', '请输入详细地址',
+                'rows', 3,
+                'hideInTable', TRUE
+            ),
+            JSON_OBJECT(
+                'field', 'status',
+                'title', '状态',
+                'type', 'select',
+                'required', TRUE,
+                'placeholder', '请选择状态',
+                'options', JSON_ARRAY(
+                    JSON_OBJECT('label', '禁用', 'value', 0),
+                    JSON_OBJECT('label', '启用', 'value', 1)
+                ),
+                'defaultValue', 1,
+                'hideInTable', FALSE,
+                'width', 80
+            ),
+            JSON_OBJECT(
+                'field', 'create_time',
+                'title', '创建时间',
+                'type', 'date',
+                'dateType', 'dateTime',
+                'hideInForm', TRUE,
+                'hideInTable', FALSE,
+                'width', 180
+            ),
+            JSON_OBJECT(
+                'field', 'update_time',
+                'title', '更新时间',
+                'type', 'date',
+                'dateType', 'dateTime',
+                'hideInForm', TRUE,
+                'hideInTable', FALSE,
+                'width', 180
+            )
+        ),
+        'tableConfig', JSON_OBJECT(
+            'showIndex', TRUE,
+            'showSelection', TRUE,
+            'pagination', TRUE,
+            'pageSize', 10,
+            'searchFields', JSON_ARRAY('username', 'real_name', 'email', 'phone', 'status')
+        ),
+        'formConfig', JSON_OBJECT(
+            'submitText', '提交',
+            'resetText', '重置',
+            'layout', 'horizontal',
+            'labelAlign', 'right'
+        )
+    ),
     1,
     1,
     'system'
